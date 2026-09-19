@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCANA</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Georgia', 'Noto Serif KR', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem 1.5rem;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 0.6em;
+            font-size: 2rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            text-indent: 0.6em;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem 2rem;
+            margin-bottom: 3.5rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #444;
+            font-family: inherit;
+            font-size: inherit;
+            letter-spacing: inherit;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        nav button.active, nav button:hover {
+            color: #fff;
+        }
+
+        .user-status {
+            position: fixed;
+            top: 1.2rem;
+            right: 1.5rem;
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .user-status span {
+            color: #aaa;
+        }
+
+        .user-status button {
+            background: none;
+            border: 1px solid #222;
+            color: #666;
+            font-family: inherit;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-status button:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 680px;
+            min-height: 240px;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.3em;
+            margin-bottom: 1.5rem;
+            color: #555;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        p, li {
+            font-size: 0.9rem;
+            line-height: 1.9;
+            color: #bbb;
+            font-weight: 300;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid #111;
+            padding-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .empty-home {
+            text-align: center;
+            color: #333;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            padding-top: 2rem;
+        }
+
+        .raw-text {
+            white-space: pre-wrap;
+            text-align: center;
+            line-height: 1.9;
+        }
+
+        .char-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #111;
+            padding-bottom: 0.8rem;
+        }
+
+        .char-header h2 {
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        .add-btn, .back-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #aaa;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .add-btn:hover, .back-btn:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .empty-gallery {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #444;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            padding: 3rem 0;
+        }
+
+        .char-card {
+            border: 1px solid #1a1a1a;
+            padding: 1.2rem;
+            background: #050505;
+            transition: border-color 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 90px;
+        }
+
+        .char-card:hover {
+            border-color: #444;
+        }
+
+        .char-card h3 {
+            font-size: 0.85rem;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+
+        .char-card .card-owner {
+            font-size: 0.65rem;
+            color: #444;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+        }
+
+        .detail-view {
+            display: none;
+        }
+
+        .detail-view.active {
+            display: block;
+        }
+
+        .detail-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #111;
+            padding-bottom: 0.8rem;
+        }
+
+        .permission-badge {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            padding: 0.2rem 0.5rem;
+            border: 1px solid #222;
+            color: #666;
+        }
+
+        .permission-badge.editable {
+            border-color: #444;
+            color: #aaa;
+        }
+
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .form-row label {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.1em;
+            padding-top: 0.5rem;
+        }
+
+        .form-row input[type="text"],
+        .form-row textarea {
+            width: 100%;
+            background: #050505;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 0.6rem;
+            font-family: inherit;
+            font-size: 0.8rem;
+        }
+
+        .form-row input[type="text"]:disabled,
+        .form-row textarea:disabled,
+        .form-row input[type="file"]:disabled {
+            background: #030303;
+            color: #555;
+            border-color: #151515;
+            cursor: not-allowed;
+        }
+
+        .form-row textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row input[type="file"] {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .preview-img {
+            max-width: 120px;
+            max-height: 120px;
+            margin-top: 0.5rem;
+            border: 1px solid #222;
+            display: none;
+            object-fit: cover;
+        }
+
+        .section-accordion {
+            margin-top: 2rem;
+            border-top: 1px solid #222;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: #050505;
+            border: 1px solid #1a1a1a;
+            border-top: none;
+            color: #aaa;
+            font-family: inherit;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            color: #fff;
+            border-color: #333;
+        }
+
+        .accordion-header::after {
+            content: '+';
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .accordion-header.active::after {
+            content: '-';
+            color: #fff;
+        }
+
+        .accordion-body {
+            display: none;
+            background: #030303;
+            border: 1px solid #1a1a1a;
+            border-top: none;
+            padding: 1.5rem 1rem;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .accordion-body.active {
+            display: block;
+        }
+
+        .save-bar {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+
+        .save-bar button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            font-family: inherit;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-bar button.delete-btn {
+            background: transparent;
+            color: #884444;
+            border: 1px solid #442222;
+        }
+
+        .save-bar button.delete-btn:hover {
+            background: #2b1111;
+            color: #ff6666;
+            border-color: #ff6666;
+        }
+
+        .modal-bg {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal-bg.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 2rem;
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .modal-box h3 {
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 1.5rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 0.6rem;
+            font-family: inherit;
+            font-size: 0.8rem;
+        }
+
+        .form-group input:focus, .form-row input:focus, .form-row textarea:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        .auth-switch {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        .auth-switch span {
+            color: #aaa;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-actions button {
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-actions button.submit {
+            color: #fff;
+            border: 1px solid #333;
+            padding: 0.4rem 0.9rem;
+        }
+
+        .save-bar button:hover, .modal-actions button.submit:hover {
+            border-color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="user-status" id="userStatusArea" style="display:none;">
+        <span id="currentUserText">GUEST</span>
+        <button onclick="handleLogout()">로그아웃</button>
+    </div>
+
+    <h1 onclick="switchTab('home')">ARCANA</h1>
+
+    <nav>
+        <button onclick="switchTab('rules')" data-tab="rules">중요규칙</button>
+        <button onclick="switchTab('world')" data-tab="world">세계관</button>
+        <button onclick="switchTab('build')" data-tab="build">캐빌딩조건</button>
+        <button onclick="switchTab('chars')" data-tab="chars">캐릭터목록</button>
+    </nav>
+
+    <div class="content-container">
+        <div id="home" class="tab-pane active">
+            <div class="empty-home">— SELECT —</div>
+        </div>
+
+        <div id="rules" class="tab-pane">
+            <h2>중요규칙</h2>
+            <ul>
+                <li>✒︎비난 및 욕설을 금지합니다. (감탄사 형태의 욕설 제외)</li>
+                <li>✒︎원작의 캐릭터와 드림은 불가능합니다.</li>
+                <li>✒︎순수혈통 성씨 사용은 금지합니다.</li>
+                <li>✒︎자캐 간의 관계는 각 캐릭터 오너 간의 합의 하에 생성 가능합니다.</li>
+                <li>✒︎앤관 성사 불가합니다. 러브버그 생기면 팟 쫑납니다. 유일놀이는 가능.</li>
+                <li>✒︎캐릭터 프로필을 작성, 외관을 공개하실 경우 다른 캐릭터의 오너분들이 그려오실 수도 있습니다.</li>
+                <li>✒︎다른 사람 초대는 불가합니다.</li>
+            </ul>
+        </div>
+
+        <div id="world" class="tab-pane">
+            <h2>세계관</h2>
+            <p class="raw-text">시간대는 현세대(1980~1998년)
+배경은 톰 리들-볼드보트가 정신차리고 마법부 장관이 된 세계선입니다. 합법적으로 마법세계를 지배중이며 일을 잘해서 체계적으로 돌아가고 있습니다.(엄브릿지 같은 캐X)</p>
+        </div>
+
+        <div id="build" class="tab-pane">
+            <h2>캐빌딩조건</h2>
+            <ul>
+                <li>✒︎이름은 영문/한글 전부 적기. 미들네임도 필수.</li>
+                <li>✒︎성격란 납작 캐해 차차 알아가자 불가능. 사유: 남들이 캐해하기 어렵다.</li>
+                <li>✒︎먼치킨 놀이 가능. 단, 트친들한테 처맞는 건 알아서 견디세요.</li>
+                <li>✒︎스탯을 캐어필 용으로 작성하기. 여기 전투제 아닙니다. (근데 야차는 가능)</li>
+            </ul>
+        </div>
+
+        <div id="chars" class="tab-pane">
+            <div id="galleryView">
+                <div class="char-header">
+                    <h2>캐릭터목록</h2>
+                    <button class="add-btn" onclick="openModal()">+ 캐릭터 추가하기</button>
+                </div>
+                <div class="gallery-grid" id="charGallery">
+                    <div class="empty-gallery">등록된 캐릭터가 없습니다.</div>
+                </div>
+            </div>
+
+            <div id="detailView" class="detail-view">
+                <div class="detail-top">
+                    <div style="display:flex; align-items:center; gap: 1rem;">
+                        <h2 id="detailTitle" style="margin:0; text-align:left;">상세 프로필</h2>
+                        <span id="permissionBadge" class="permission-badge">READ-ONLY</span>
+                    </div>
+                    <button class="back-btn" onclick="closeDetail()">← 목록으로</button>
+                </div>
+                <div class="form-grid" id="profileFormContainer">
+                    <div class="form-row">
+                        <label>1. 캐치 프레이즈</label>
+                        <input type="text" id="p1" placeholder="예: 심연을 꿰뚫는 시선">
+                    </div>
+                    <div class="form-row">
+                        <label>2. 캐릭터 한 마디</label>
+                        <input type="text" id="p2" placeholder="예: '운명? 고쳐 쓰면 되지.'">
+                    </div>
+                    <div class="form-row">
+                        <label>3. 이름 (한/영+미들)</label>
+                        <input type="text" id="p3" placeholder="예: 시온 아스터 / Sion Aster">
+                    </div>
+                    <div class="form-row">
+                        <label>4. 나이</label>
+                        <input type="text" id="p4" placeholder="예: 17세">
+                    </div>
+                    <div class="form-row">
+                        <label>5. 성별</label>
+                        <input type="text" id="p5" placeholder="예: 남성">
+                    </div>
+                    <div class="form-row">
+                        <label>6. 키/몸무게</label>
+                        <input type="text" id="p6" placeholder="예: 178cm / 68kg">
+                    </div>
+                    <div class="form-row">
+                        <label>7. 혈통</label>
+                        <input type="text" id="p7" placeholder="예: 혼혈 (순수혈통 성씨금지 주의)">
+                    </div>
+                    <div class="form-row">
+                        <label>8. 기숙사</label>
+                        <input type="text" id="p8" placeholder="예: 래번클로">
+                    </div>
+                    <div class="form-row">
+                        <label>9. 외관 (이미지/서술)</label>
+                        <div>
+                            <input type="file" id="file9" accept="image/*" onchange="previewImage(this, 'imgPreview9', 'imgData9')">
+                            <input type="hidden" id="imgData9">
+                            <img id="imgPreview9" class="preview-img" alt="미리보기">
+                            <textarea id="desc9" placeholder="외관 서술..." style="margin-top:0.5rem;"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>10. 성격</label>
+                        <textarea id="p10" placeholder="납작 캐해 불가, 상세히 작성..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label>11. 지팡이 (이미지/스펙)</label>
+                        <div>
+                            <input type="file" id="file11" accept="image/*" onchange="previewImage(this, 'imgPreview11', 'imgData11')">
+                            <input type="hidden" id="imgData11">
+                            <img id="imgPreview11" class="preview-img" alt="미리보기">
+                            <input type="text" id="wand11" placeholder="예: 11인치, 아카시아, 용 심장 현" style="margin-top:0.5rem;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>12. 특징</label>
+                        <textarea id="p12" placeholder="특징 서술..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label>13. 스탯</label>
+                        <textarea id="p13" placeholder="캐어필용 스탯..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label>14. 텍관</label>
+                        <textarea id="p14" placeholder="텍스트 관계 서술..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section-accordion">
+                    <button class="accordion-header" onclick="toggleAccordion('secPrivate')">비공개란 (클릭하여 확인)</button>
+                    <div class="accordion-body" id="secPrivate">
+                        <div class="form-grid">
+                            <div class="form-row">
+                                <label>1. 비밀설정</label>
+                                <textarea id="priv1" placeholder="비밀 설정 서술..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <label>2. 성장 if</label>
+                                <textarea id="priv2" placeholder="성장 if 서술..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-accordion">
+                    <button class="accordion-header" onclick="toggleAccordion('secOwner')">오너란 (클릭하여 확인)</button>
+                    <div class="accordion-body" id="secOwner">
+                        <div class="form-grid">
+                            <div class="form-row">
+                                <label>1. 닉네임</label>
+                                <input type="text" id="ownerNick" placeholder="디스코드 내 닉네임 기재">
+                            </div>
+                            <div class="form-row">
+                                <label>2. 트위터</label>
+                                <input type="text" id="ownerTwitter" placeholder="@아이디">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="save-bar" id="saveBarArea">
+                    <button class="delete-btn" onclick="deleteCurrentCharacter()">삭제하기</button>
+                    <button onclick="saveDetail()">저장하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-bg" id="charModal">
+        <div class="modal-box">
+            <h3>Add Character</h3>
+            <div class="form-group">
+                <label>이름 (한글/영문)</label>
+                <input type="text" id="nameInput" placeholder="예: 시온 아스터 / Sion Aster">
+            </div>
+            <div class="modal-actions">
+                <button onclick="closeModal()">취소</button>
+                <button class="submit" onclick="addCharacter()">등록</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-bg active" id="authModal">
+        <div class="modal-box">
+            <h3 id="authTitle">LOGIN</h3>
+            <div class="form-group">
+                <label id="authIdLabel">오너 아이디 / 핸들</label>
+                <input type="text" id="authInputId" placeholder="예: owner_arcana">
+            </div>
+            <div class="form-group" id="authPwGroup">
+                <label>비밀번호</label>
+                <input type="password" id="authInputPw" placeholder="••••••••">
+            </div>
+            <div class="modal-actions">
+                <button class="submit" id="authSubmitBtn" onclick="handleAuthSubmit()">접속</button>
+            </div>
+            <div class="auth-switch">
+                <span id="authSwitchText" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOwner = '';
+        let currentUser = null;
+        let currentCharacterId = null;
+        let isRegisterMode = false;
+
+        const STORAGE_KEY_USERS = 'arcana_users';
+        const STORAGE_KEY_CURRENT_USER = 'arcana_current_user';
+        const STORAGE_KEY_CHARS = 'arcana_characters';
+
+        function loadUsers() {
+            const data = localStorage.getItem(STORAGE_KEY_USERS);
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+        }
+
+        function loadCharacters() {
+            const data = localStorage.getItem(STORAGE_KEY_CHARS);
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveCharacters(chars) {
+            localStorage.setItem(STORAGE_KEY_CHARS, JSON.stringify(chars));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem(STORAGE_KEY_CURRENT_USER);
+            if (savedUser) {
+                completeLogin(savedUser, false);
+            }
+            renderGallery();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            
+            if (tabId === 'home') {
+                document.getElementById('home').classList.add('active');
+                return;
+            }
+            
+            const targetPane = document.getElementById(tabId);
+            const targetBtn = document.querySelector(`nav button[data-tab="${tabId}"]`);
+            if (targetPane) targetPane.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+        }
+
+        function toggleAccordion(id) {
+            const body = document.getElementById(id);
+            const header = body.previousElementSibling;
+            body.classList.toggle('active');
+            header.classList.toggle('active');
+        }
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            const title = document.getElementById('authTitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const switchText = document.getElementById('authSwitchText');
+
+            if (isRegisterMode) {
+                title.innerText = 'REGISTER';
+                submitBtn.innerText = '가입 완료';
+                switchText.innerText = '이미 계정이 있으신가요? 로그인';
+            } else {
+                title.innerText = 'LOGIN';
+                submitBtn.innerText = '접속';
+                switchText.innerText = '계정이 없으신가요? 회원가입';
+            }
+        }
+
+        function handleAuthSubmit() {
+            const idVal = document.getElementById('authInputId').value.trim();
+            const pwVal = document.getElementById('authInputPw').value.trim();
+
+            if (!idVal || !pwVal) {
+                alert('아이디와 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+
+            const users = loadUsers();
+
+            if (isRegisterMode) {
+                if (users[idVal]) {
+                    alert('이미 존재하는 오너 아이디입니다.');
+                    return;
+                }
+                users[idVal] = pwVal;
+                saveUsers(users);
+                alert('회원가입이 완료되었습니다. 로그인해주세요.');
+                toggleAuthMode();
+            } else {
+                if (users[idVal] && users[idVal] === pwVal) {
+                    completeLogin(idVal, true);
+                } else if (!users[idVal]) {
+                    if (confirm('등록된 계정이 없습니다. 이 정보로 즉시 접속(데모)하시겠습니까?')) {
+                        users[idVal] = pwVal;
+                        saveUsers(users);
+                        completeLogin(idVal, true);
+                    }
+                } else {
+                    alert('비밀번호가 일치하지 않습니다.');
+                }
+            }
+        }
+
+        function completeLogin(userId, persist = true) {
+            currentUser = userId;
+            if (persist) {
+                localStorage.setItem(STORAGE_KEY_CURRENT_USER, userId);
+            }
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('userStatusArea').style.display = 'flex';
+            document.getElementById('currentUserText').innerText = userId;
+            document.getElementById('authInputId').value = '';
+            document.getElementById('authInputPw').value = '';
+        }
+
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                currentUser = null;
+                localStorage.removeItem(STORAGE_KEY_CURRENT_USER);
+                document.getElementById('userStatusArea').style.display = 'none';
+                document.getElementById('authModal').classList.add('active');
+                switchTab('home');
+                closeDetail();
+            }
+        }
+
+        function openModal() {
+            if (!currentUser) {
+                alert('로그인 후 이용 가능합니다.');
+                return;
+            }
+            document.getElementById('charModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('charModal').classList.remove('active');
+        }
+
+        function addCharacter() {
+            const nameVal = document.getElementById('nameInput').value.trim();
+            if (!nameVal) {
+                alert('이름을 입력해주세요.');
+                return;
+            }
+
+            const chars = loadCharacters();
+            const charId = 'char_' + Date.now();
+
+            chars[charId] = {
+                id: charId,
+                name: nameVal,
+                owner: currentUser,
+                p1: '', p2: '', p3: nameVal, p4: '', p5: '', p6: '', p7: '', p8: '',
+                imgData9: '', desc9: '', p10: '', imgData11: '', wand11: '', p12: '', p13: '', p14: '',
+                priv1: '', priv2: '',
+                ownerNick: '', ownerTwitter: ''
+            };
+
+            saveCharacters(chars);
+            renderGallery();
+            document.getElementById('nameInput').value = '';
+            closeModal();
+        }
+
+        function renderGallery() {
+            const gallery = document.getElementById('charGallery');
+            const chars = loadCharacters();
+            const keys = Object.keys(chars);
+
+            gallery.innerHTML = '';
+
+            if (keys.length === 0) {
+                gallery.innerHTML = '<div class="empty-gallery">등록된 캐릭터가 없습니다.</div>';
+                return;
+            }
+
+            keys.forEach(key => {
+                const c = chars[key];
+                const card = document.createElement('div');
+                card.className = 'char-card';
+                card.onclick = () => openDetail(c.id);
+                card.innerHTML = `
+                    <div>
+                        <h3>${c.name}</h3>
+                        <div class="card-owner">OWNER: @${c.owner}</div>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+        }
+
+        function setFormDisabled(disabled) {
+            const inputs = document.querySelectorAll('#detailView input, #detailView textarea');
+            inputs.forEach(el => {
+                if (!el.classList.contains('back-btn')) {
+                    el.disabled = disabled;
+                }
+            });
+            const saveBar = document.getElementById('saveBarArea');
+            const badge = document.getElementById('permissionBadge');
+
+            if (disabled) {
+                saveBar.style.display = 'none';
+                badge.innerText = 'READ-ONLY (타인 소유)';
+                badge.classList.remove('editable');
+            } else {
+                saveBar.style.display = 'flex';
+                badge.innerText = 'EDITABLE (내 캐릭터)';
+                badge.classList.add('editable');
+            }
+        }
+
+        function openDetail(charId) {
+            const chars = loadCharacters();
+            const c = chars[charId];
+            if (!c) return;
+
+            currentCharacterId = charId;
+            currentOwner = c.owner;
+
+            document.getElementById('galleryView').style.display = 'none';
+            document.getElementById('detailView').classList.add('active');
+            document.getElementById('detailTitle').innerText = c.name;
+
+            const fields = ['p1','p2','p3','p4','p5','p6','p7','p8','desc9','p10','wand11','p12','p13','p14','priv1','priv2','ownerNick','ownerTwitter'];
+            fields.forEach(f => {
+                const el = document.getElementById(f);
+                if (el) el.value = c[f] || '';
+            });
+
+            bindPreviewImage('imgData9', 'imgPreview9', c.imgData9);
+            bindPreviewImage('imgData11', 'imgPreview11', c.imgData11);
+
+            const isOwner = (currentUser === currentOwner);
+            setFormDisabled(!isOwner);
+        }
+
+        function bindPreviewImage(hiddenId, imgId, base64Val) {
+            const hidden = document.getElementById(hiddenId);
+            const img = document.getElementById(imgId);
+            hidden.value = base64Val || '';
+            if (base64Val) {
+                img.src = base64Val;
+                img.style.display = 'block';
+            } else {
+                img.src = '';
+                img.style.display = 'none';
+            }
+        }
+
+        function closeDetail() {
+            currentCharacterId = null;
+            currentOwner = '';
+            document.getElementById('detailView').classList.remove('active');
+            document.getElementById('galleryView').style.display = 'block';
+        }
+
+        function deleteCurrentCharacter() {
+            if (currentUser !== currentOwner) {
+                alert('캐릭터를 생성한 사람만 삭제할 수 있습니다.');
+                return;
+            }
+            if (confirm('정말 이 캐릭터를 삭제하시겠습니까?')) {
+                const chars = loadCharacters();
+                delete chars[currentCharacterId];
+                saveCharacters(chars);
+                renderGallery();
+                closeDetail();
+                alert('캐릭터가 삭제되었습니다.');
+            }
+        }
+
+        function previewImage(input, previewId, hiddenDataId) {
+            const preview = document.getElementById(previewId);
+            const hiddenData = document.getElementById(hiddenDataId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    hiddenData.value = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function saveDetail() {
+            if (currentUser !== currentOwner) {
+                alert('캐릭터를 생성한 사람만 수정할 수 있습니다.');
+                return;
+            }
+            const chars = loadCharacters();
+            const c = chars[currentCharacterId];
+            if (!c) return;
+
+            c.name = document.getElementById('p3').value.trim() || c.name;
+            const fields = ['p1','p2','p3','p4','p5','p6','p7','p8','imgData9','desc9','p10','imgData11','wand11','p12','p13','p14','priv1','priv2','ownerNick','ownerTwitter'];
+            fields.forEach(f => {
+                const el = document.getElementById(f);
+                if (el) c[f] = el.value;
+            });
+
+            chars[currentCharacterId] = c;
+            saveCharacters(chars);
+            renderGallery();
+            alert('프로필 내용이 저장되었습니다.');
+        }
+    </script>
+</body>
+</html>
