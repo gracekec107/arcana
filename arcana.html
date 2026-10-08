@@ -54,38 +54,6 @@
             color: #fff;
         }
 
-        .user-status {
-            position: fixed;
-            top: 1.2rem;
-            right: 1.5rem;
-            font-size: 0.7rem;
-            color: #555;
-            letter-spacing: 0.1em;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .user-status span {
-            color: #aaa;
-        }
-
-        .user-status button {
-            background: none;
-            border: 1px solid #222;
-            color: #666;
-            font-family: inherit;
-            font-size: 0.65rem;
-            padding: 0.2rem 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .user-status button:hover {
-            border-color: #fff;
-            color: #fff;
-        }
-
         .content-container {
             width: 100%;
             max-width: 680px;
@@ -393,19 +361,6 @@
             font-size: 0.8rem;
         }
 
-        .auth-switch {
-            margin-top: 1rem;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #555;
-        }
-
-        .auth-switch span {
-            color: #aaa;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
         .modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -445,6 +400,153 @@
             font-style: italic;
         }
 
+
+        .list-toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 0.6rem 0.8rem;
+            font-family: inherit;
+            font-size: 0.8rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-chip {
+            background: none;
+            border: 1px solid #222;
+            color: #666;
+            font-family: inherit;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            padding: 0.3rem 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-chip:hover {
+            border-color: #666;
+            color: #ccc;
+        }
+
+        .filter-chip.active {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .filter-chip .chip-count {
+            color: #444;
+            margin-left: 0.3rem;
+        }
+
+        .filter-chip.active .chip-count {
+            color: #999;
+        }
+
+        .result-count {
+            font-size: 0.7rem;
+            color: #444;
+            letter-spacing: 0.1em;
+        }
+
+        .card-dorm {
+            font-size: 0.65rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        #addModal .modal-box {
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 0.6rem;
+            font-family: inherit;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        .form-section-title {
+            font-size: 0.7rem;
+            color: #444;
+            letter-spacing: 0.2em;
+            margin: 1.6rem 0 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #222;
+        }
+
+        .form-hint {
+            font-size: 0.65rem;
+            color: #444;
+            margin-top: 0.3rem;
+            line-height: 1.5;
+        }
+
+        .req {
+            color: #888;
+        }
+
+        .form-error {
+            display: none;
+            font-size: 0.72rem;
+            color: #c88;
+            margin-top: 1rem;
+        }
+
+        .add-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #aaa;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .add-btn:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
@@ -459,11 +561,6 @@
     </style>
 </head>
 <body>
-
-    <div class="user-status" id="userStatusArea" style="display:none;">
-        <span id="currentUserText">GUEST</span>
-        <button onclick="handleLogout()">로그아웃</button>
-    </div>
 
     <h1 onclick="switchTab('home')">ARCANA</h1>
 
@@ -512,6 +609,12 @@
             <div id="galleryView">
                 <div class="char-header">
                     <h2>캐릭터목록</h2>
+                    <button class="add-btn" onclick="openAddModal()">+ 캐릭터 추가</button>
+                </div>
+                <div class="list-toolbar">
+                    <input type="search" class="search-input" id="charSearch" placeholder="이름, 오너, 캐치프레이즈로 검색" oninput="onSearchInput(this.value)" autocomplete="off">
+                    <div class="filter-row" id="dormFilters"></div>
+                    <div class="result-count" id="resultCount"></div>
                 </div>
                 <div class="gallery-grid" id="charGallery"></div>
             </div>
@@ -614,6 +717,107 @@
         </div>
     </div>
 
+    <!-- 캐릭터 추가 모달 -->
+    <div class="modal-bg" id="addModal">
+        <div class="modal-box">
+            <h3>캐릭터 추가</h3>
+
+            <div class="form-group">
+                <label>이름 <span class="req">*</span></label>
+                <input type="text" id="add-name" placeholder="예: 리즈 A. 셰스폴 Liz Alia Shespole">
+                <div class="form-hint">영문/한글 모두, 미들네임 포함해서 적어주세요.</div>
+            </div>
+            <div class="form-group">
+                <label>기숙사 <span class="req">*</span></label>
+                <select id="add-p8">
+                    <option value="">선택해주세요</option>
+                    <option value="Gryffindor—그리핀도르">Gryffindor—그리핀도르</option>
+                    <option value="Slytherin—슬리데린">Slytherin—슬리데린</option>
+                    <option value="Ravenclaw—래번클로">Ravenclaw—래번클로</option>
+                    <option value="Hufflepuff—후플푸프">Hufflepuff—후플푸프</option>
+                    <option value="기타">기타</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>인트로 대사</label>
+                <input type="text" id="add-introQuote" placeholder="카드를 열 때 처음 보이는 한마디">
+            </div>
+            <div class="form-group">
+                <label>프로필 본문 링크</label>
+                <input type="url" id="add-docUrl" placeholder="https://docs.google.com/...">
+            </div>
+
+            <div class="form-section-title">기본 정보</div>
+            <div class="form-group">
+                <label>캐치 프레이즈</label>
+                <input type="text" id="add-p1" placeholder="예: [호기심 천국]">
+            </div>
+            <div class="form-group">
+                <label>나이</label>
+                <input type="text" id="add-p4" placeholder="예: 11세">
+            </div>
+            <div class="form-group">
+                <label>성별</label>
+                <input type="text" id="add-p5">
+            </div>
+            <div class="form-group">
+                <label>키/몸무게</label>
+                <input type="text" id="add-p6" placeholder="예: 138cm/32kg">
+            </div>
+            <div class="form-group">
+                <label>혈통</label>
+                <input type="text" id="add-p7" placeholder="예: HB">
+            </div>
+
+            <div class="form-section-title">상세 정보</div>
+            <div class="form-group">
+                <label>외관 이미지 주소</label>
+                <input type="url" id="add-imgData9" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>외관 설명</label>
+                <textarea id="add-desc9"></textarea>
+            </div>
+            <div class="form-group">
+                <label>성격</label>
+                <textarea id="add-p10" style="min-height:140px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label>지팡이</label>
+                <input type="text" id="add-wand11" placeholder="예: 11인치, 사시나무, 용의 심근, 꽤 유연함">
+            </div>
+            <div class="form-group">
+                <label>특징</label>
+                <textarea id="add-p12" style="min-height:120px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label>스탯</label>
+                <input type="text" id="add-p13" placeholder="예: 마력 4 | 체력 2 | ... (총합: 15)">
+            </div>
+            <div class="form-group">
+                <label>텍관</label>
+                <input type="text" id="add-p14" placeholder="없으면 (-)">
+            </div>
+
+            <div class="form-section-title">오너 정보</div>
+            <div class="form-group">
+                <label>닉네임</label>
+                <input type="text" id="add-ownerNick">
+            </div>
+            <div class="form-group">
+                <label>트위터</label>
+                <input type="text" id="add-ownerTwitter" placeholder="@handle">
+            </div>
+
+            <div class="form-error" id="addError"></div>
+
+            <div class="modal-actions">
+                <button onclick="closeAddModal()">취소</button>
+                <button class="submit" onclick="submitNewCharacter()">추가하기</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 타로카드 인트로 팝업 모달 -->
     <div class="modal-bg" id="tarotModal">
         <div class="modal-box" style="text-align: center;">
@@ -636,35 +840,13 @@
         </div>
     </div>
 
-    <div class="modal-bg active" id="authModal">
-        <div class="modal-box">
-            <h3 id="authTitle">LOGIN</h3>
-            <div class="form-group">
-                <label id="authIdLabel">오너 아이디 / 핸들</label>
-                <input type="text" id="authInputId" placeholder="예: owner_arcana">
-            </div>
-            <div class="form-group" id="authPwGroup">
-                <label>비밀번호</label>
-                <input type="password" id="authInputPw" placeholder="••••••••">
-            </div>
-            <div class="modal-actions">
-                <button class="submit" id="authSubmitBtn" onclick="handleAuthSubmit()">접속</button>
-            </div>
-            <div class="auth-switch">
-                <span id="authSwitchText" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</span>
-            </div>
-        </div>
-    </div>
-
     <script>
         let currentOwner = 'system';
-        let currentUser = null;
         let currentCharacterId = 'liz_a_shespole';
         let pendingCharId = null;
-        let isRegisterMode = false;
+        let searchQuery = '';
+        let dormFilter = 'all';
 
-        const STORAGE_KEY_USERS = 'arcana_users';
-        const STORAGE_KEY_CURRENT_USER = 'arcana_current_user';
         const STORAGE_KEY_CHARS = 'arcana_characters_v9'; // 버전 키 갱신
 
         const INITIAL_LIZ_DATA = {
@@ -736,17 +918,32 @@
                 p14: '(-)',
                 ownerNick: '리앨',
                 ownerTwitter: '@neleng_02'
+            },
+            'evander_d_fairfox': {
+                id: "evander_d_fairfox",
+                name: "에반더 D. 페어폭스",
+                owner: "후추",
+                introQuote: "어디를 보고 계십니까~",
+                docUrl: "https://docs.google.com/document/d/1oUsoY0W3e6kj6LnVn2H7q4vEpGrSNArh1fYS0DZzqng/edit?usp=sharing",
+                p1: "【 간단한 수업을 시작하겠습니다. 】",
+                p3: "에반더 D. 페어폭스",
+                p4: "11세",
+                p5: "남성",
+                p6: "145cm/35kg",
+                p7: "순수 혈통",
+                p8: "슬리데린 Slytherin",
+                imgData9: "https://i.ibb.co/DfyCV52d/0.png",
+                desc9: "바보털 두가닥, 검은 색과 흰 색의 투톤 머리. 조금 긴 옆머리를 제외하면 평범하기 그지 없는 인상. 특징이라면… 매번 감고 다니는 눈?",
+                p10: "#현실주의\n현실을 사세요~ 이 녀석, 눈치라도 주는 건가? 싶지만… 당신에게 진지하게 해주는 충고이다. 현실을 직시해서 나쁠게 뭐가 있단 말인가? 이 작은 마법세계에서 현실이란 중요한 것이다. 망상하기보단 마법 이론을 외우는 것이 더 중요한 것처럼.\n\n#효율주의\n빠릿빠릿하고 알뜰하게 움직이자! 다시 말하지만, 나쁠 것 없지 않는가. 그런 의미에서 효율성 떨어지는 일을 하는 친구들을 보고 있자니 고치지 않고 넘어갈 수가 없다. 밤하늘의 별을 센다거나, 나오지도 않을 지식을 찾는다거나. 당장 달려가서 막아줘야지.\n\n#개인주의\n나만 아니면 된다. 다른 사람에게 도움의 손길을 내밀어봐야 얼마나 큰게 돌아온다고…. 아무 이유 없이 선행을 하는 사람들을 보면 신기할 따름이다. 그리고 사람들은 그걸 ‘착하다’고 부른다. 어째서 ‘손해본다’고 표현하지 않는거지?\n-\n하지만 그런 성격과 달리 그의 전체적인 평판은 ‘신사적인 아이’이다. 다른 사람에게 피해 주지 않고 자기 할 것은 열심히 하며, 거슬리지 않는다면 청하는 도움을 무시하진 않으니까.",
+                imgData11: "",
+                wand11: "적참나무/용의 심근/13¾\" (34.92)/탄력 없음",
+                p12: "생일: 2월 7일\n혈액형: A형\n가족관계: 어머니, 아버지, 조부모님들\n\nL: 효율적인 것, 마법, 씁쓸한 디저트\nH: 벌레, 비효율적인 행동, 강요\nS: 머글본:아니, 무서운 게 아니고 경계라고요 경계…!\n\n페어폭스 가문에 대해–\n순혈가 쪽에선 나름 유명한 집사 가문이다. 에반더는 나이가 나이인지라, 아직 집사 교육을 받고 있지는 않지만… 그들의 에티튜드가 그대로 드러나는 것은 어쩔 수 없는 일이다. 좋은거지~ 하면서 넘기고는 있지만, 상냥하네- 신사같네- 같은 말을 들으면 영락없이 얼굴이 붉어지기도 한다.\n\n말투에 대해–\n격식이 갖추어진 어조와 표현을 사용한다. (존댓말.) 절제된 품격을 보여주는 것도 순혈 집사가에서 해야하는 일이라나 뭐라나.",
+                p13: "마력 ■■■■□ 4\n체력 ■□□□□ 1\n공격 ■■■□□ 3\n방어 ■■□□□ 2\n민첩 ■□□□□ 1\n정신 ■■■□□ 3\n행운 ■□□□□ 1\n총합: 15",
+                p14: "-",
+                ownerNick: "후추",
+                ownerTwitter: "@huchu_Bee"
             }
         };
-
-        function loadUsers() {
-            const data = localStorage.getItem(STORAGE_KEY_USERS);
-            return data ? JSON.parse(data) : {};
-        }
-
-        function saveUsers(users) {
-            localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
-        }
 
         function loadCharacters() {
             const data = localStorage.getItem(STORAGE_KEY_CHARS);
@@ -766,10 +963,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const savedUser = localStorage.getItem(STORAGE_KEY_CURRENT_USER);
-            if (savedUser) {
-                completeLogin(savedUser, false);
-            }
             loadCharacters();
         });
 
@@ -806,106 +999,182 @@
             renderGallery();
         }
 
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            const title = document.getElementById('authTitle');
-            const submitBtn = document.getElementById('authSubmitBtn');
-            const switchText = document.getElementById('authSwitchText');
+        const DORMS = [
+            { key: 'Gryffindor', label: '그리핀도르', match: ['gryffindor', '그리핀도르', '그리핀도어'] },
+            { key: 'Slytherin',  label: '슬리데린',   match: ['slytherin', '슬리데린'] },
+            { key: 'Ravenclaw',  label: '래번클로',   match: ['ravenclaw', '래번클로'] },
+            { key: 'Hufflepuff', label: '후플푸프',   match: ['hufflepuff', '후플푸프'] }
+        ];
 
-            if (isRegisterMode) {
-                title.innerText = 'REGISTER';
-                submitBtn.innerText = '가입 완료';
-                switchText.innerText = '이미 계정이 있으신가요? 로그인';
-            } else {
-                title.innerText = 'LOGIN';
-                submitBtn.innerText = '접속';
-                switchText.innerText = '계정이 없으신가요? 회원가입';
-            }
+        function getDormKey(c) {
+            const text = String(c.p8 || '').toLowerCase();
+            const found = DORMS.find(d => d.match.some(m => text.includes(m)));
+            return found ? found.key : 'etc';
         }
 
-        function handleAuthSubmit() {
-            const idVal = document.getElementById('authInputId').value.trim();
-            const pwVal = document.getElementById('authInputPw').value.trim();
-
-            if (!idVal || !pwVal) {
-                alert('아이디와 비밀번호를 모두 입력해주세요.');
-                return;
-            }
-
-            const users = loadUsers();
-
-            if (isRegisterMode) {
-                if (users[idVal]) {
-                    alert('이미 존재하는 오너 아이디입니다.');
-                    return;
-                }
-                users[idVal] = pwVal;
-                saveUsers(users);
-                alert('회원가입이 완료되었습니다. 로그인해주세요.');
-                toggleAuthMode();
-            } else {
-                if (users[idVal] && users[idVal] === pwVal) {
-                    completeLogin(idVal, true);
-                } else if (!users[idVal]) {
-                    if (confirm('등록된 계정이 없습니다. 이 정보로 즉시 접속하시겠습니까?')) {
-                        users[idVal] = pwVal;
-                        saveUsers(users);
-                        completeLogin(idVal, true);
-                    }
-                } else {
-                    alert('비밀번호가 일치하지 않습니다.');
-                }
-            }
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
-        function completeLogin(userId, persist = true) {
-            currentUser = userId;
-            if (persist) {
-                localStorage.setItem(STORAGE_KEY_CURRENT_USER, userId);
-            }
-            document.getElementById('authModal').classList.remove('active');
-            document.getElementById('userStatusArea').style.display = 'flex';
-            document.getElementById('currentUserText').innerText = userId;
-            document.getElementById('authInputId').value = '';
-            document.getElementById('authInputPw').value = '';
+        function matchesSearch(c, q) {
+            if (!q) return true;
+            const haystack = [c.name, c.owner, c.ownerNick, c.p1, c.ownerTwitter]
+                .join(' ').toLowerCase();
+            return haystack.includes(q);
         }
 
-        function handleLogout() {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                currentUser = null;
-                localStorage.removeItem(STORAGE_KEY_CURRENT_USER);
-                document.getElementById('userStatusArea').style.display = 'none';
-                document.getElementById('authModal').classList.add('active');
-                switchTab('home');
-                closeDetail();
-            }
+        function onSearchInput(value) {
+            searchQuery = value.trim().toLowerCase();
+            renderGallery();
+        }
+
+        function setDormFilter(key) {
+            dormFilter = key;
+            renderGallery();
+        }
+
+        function renderDormFilters(chars) {
+            const q = searchQuery;
+            const list = Object.values(chars).filter(c => matchesSearch(c, q));
+            const counts = { all: list.length, etc: 0 };
+            DORMS.forEach(d => counts[d.key] = 0);
+            list.forEach(c => counts[getDormKey(c)]++);
+
+            const chips = [{ key: 'all', label: '전체' }, ...DORMS, { key: 'etc', label: '기타' }];
+            const box = document.getElementById('dormFilters');
+            box.innerHTML = '';
+            chips.forEach(ch => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-chip' + (dormFilter === ch.key ? ' active' : '');
+                btn.innerHTML = `${ch.label}<span class="chip-count">${counts[ch.key]}</span>`;
+                btn.onclick = () => setDormFilter(ch.key);
+                box.appendChild(btn);
+            });
         }
 
         function renderGallery() {
             const gallery = document.getElementById('charGallery');
             const chars = loadCharacters();
-            const keys = Object.keys(chars);
+            const all = Object.values(chars);
 
             gallery.innerHTML = '';
+            renderDormFilters(chars);
 
-            if (keys.length === 0) {
-                gallery.innerHTML = '<div class="empty-gallery">등록된 캐릭터가 없습니다.</div>';
+            if (all.length === 0) {
+                document.getElementById('resultCount').innerText = '';
+                gallery.innerHTML = '<div class="empty-gallery">등록된 캐릭터가 없습니다.<br>오른쪽 위의 [+ 캐릭터 추가]로 첫 캐릭터를 등록해보세요.</div>';
                 return;
             }
 
-            keys.forEach(key => {
-                const c = chars[key];
+            const filtered = all.filter(c =>
+                (dormFilter === 'all' || getDormKey(c) === dormFilter) && matchesSearch(c, searchQuery)
+            );
+
+            document.getElementById('resultCount').innerText =
+                (searchQuery || dormFilter !== 'all')
+                    ? `${all.length}명 중 ${filtered.length}명`
+                    : `총 ${all.length}명`;
+
+            if (filtered.length === 0) {
+                gallery.innerHTML = '<div class="empty-gallery">조건에 맞는 캐릭터가 없습니다.<br>검색어나 기숙사 필터를 바꿔보세요.</div>';
+                return;
+            }
+
+            filtered.forEach(c => {
                 const card = document.createElement('div');
                 card.className = 'char-card';
                 card.onclick = () => requestOpenDetail(c.id);
                 card.innerHTML = `
                     <div>
-                        <h3>${c.name}</h3>
-                        <div class="card-owner">OWNER: @${c.ownerNick || c.owner}</div>
+                        <h3>${escapeHtml(c.name)}</h3>
+                        <div class="card-dorm">${escapeHtml(c.p8 || '')}</div>
+                        <div class="card-owner">OWNER: @${escapeHtml(c.ownerNick || c.owner)}</div>
                     </div>
                 `;
                 gallery.appendChild(card);
             });
+        }
+
+        function openAddModal() {
+            document.getElementById('addError').style.display = 'none';
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        function isSafeUrl(url) {
+            return /^https?:\/\//i.test(url);
+        }
+
+        function showAddError(msg) {
+            const el = document.getElementById('addError');
+            el.innerText = msg;
+            el.style.display = 'block';
+        }
+
+        function submitNewCharacter() {
+            const val = id => document.getElementById('add-' + id).value.trim();
+
+            const name = val('name');
+            const dorm = val('p8');
+            const docUrl = val('docUrl');
+            const imgUrl = val('imgData9');
+
+            if (!name) { showAddError('이름을 입력해주세요.'); return; }
+            if (!dorm) { showAddError('기숙사를 선택해주세요.'); return; }
+            if (docUrl && !isSafeUrl(docUrl)) { showAddError('프로필 본문 링크는 http:// 또는 https://로 시작해야 합니다.'); return; }
+            if (imgUrl && !isSafeUrl(imgUrl)) { showAddError('외관 이미지 주소는 http:// 또는 https://로 시작해야 합니다.'); return; }
+
+            const chars = loadCharacters();
+            if (Object.values(chars).some(c => c.name === name)) {
+                showAddError('같은 이름의 캐릭터가 이미 있습니다.');
+                return;
+            }
+
+            const id = 'char_' + Date.now();
+            chars[id] = {
+                id,
+                name,
+                owner: val('ownerNick') || '익명',
+                introQuote: val('introQuote'),
+                docUrl,
+                p1: val('p1'),
+                p3: name,
+                p4: val('p4'),
+                p5: val('p5'),
+                p6: val('p6'),
+                p7: val('p7'),
+                p8: dorm,
+                imgData9: imgUrl,
+                desc9: val('desc9'),
+                p10: val('p10'),
+                imgData11: '',
+                wand11: val('wand11'),
+                p12: val('p12'),
+                p13: val('p13'),
+                p14: val('p14') || '(-)',
+                ownerNick: val('ownerNick') || '익명',
+                ownerTwitter: val('ownerTwitter')
+            };
+
+            localStorage.setItem(STORAGE_KEY_CHARS, JSON.stringify(chars));
+
+            document.querySelectorAll('#addModal input, #addModal textarea').forEach(el => el.value = '');
+            document.getElementById('add-p8').value = '';
+            closeAddModal();
+
+            // 새 캐릭터가 바로 보이도록 필터 초기화
+            searchQuery = '';
+            dormFilter = 'all';
+            document.getElementById('charSearch').value = '';
+            renderGallery();
         }
 
         function requestOpenDetail(charId) {
